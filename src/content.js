@@ -133,6 +133,99 @@ Flag found: BYPASS_CTF{rum_is_better_than_cipher}
 fsociety@FSOCIETY:~$
 \`\`\``,
                 flag: "BYPASS_CTF{rum_is_better_than_cipher}"
+            },
+            {
+                title: "Count the steps, not the stars",
+                author: "Vikhyat",
+                description: `“When the map looks wrong, try to think like mathematician…
+and let each step grow better than last.”
+Bruteforced the n values using a python script as we knew the enc value of \`B\` from \`BYPASS_CTF{\``,
+                solution: `\`\`\`
+
+from multiprocessing import Pool, Value, cpu_count
+from functools import reduce
+from itertools import product, islice
+
+TARGET = 3827591716288630776540535668038365628871133898264070018792556815246012718335698404146173574751497387952867457629767297216012860845869627771721518203820241154212224
+BASE = ord("B") ** 2
+
+CHUNK = 120000
+progress = Value('i', 0)
+found = Value('b', False)
+
+def ecv(v, a, b, c):
+    return reduce(lambda v, s: (v << s) ^ s, (16, a, b, c), v)
+
+def worker(chunk):
+    for a, b, c in chunk:
+        if found.value:
+            return None
+
+        if ecv(BASE, a, b, c) == TARGET:
+            with found.get_lock():
+                found.value = True
+            return (a, b, c)
+
+    with progress.get_lock():
+        progress.value += len(chunk)
+        if progress.value % 100000 == 0:
+            print(f"testing {progress.value:,} combos")
+
+    return None
+
+def chunks(iterable, size):
+    it = iter(iterable)
+    while True:
+        block = list(islice(it, size))
+        if not block:
+            break
+        yield block
+
+def main():
+    combos = product(range(10, 100), range(10, 100), range(100, 1000))
+
+    with Pool(cpu_count()) as p:
+        for result in p.imap_unordered(worker, chunks(combos, CHUNK)):
+            if result:
+                print("\n match")
+                print(result)
+                return
+
+    print("\nNo match")
+
+if __name__ == "__main__":
+    main()
+
+
+\`\`\`
+We get values as 32,96, 384
+
+Run a decode script, get the flag (idk why it had noise)
+
+\`\`\`
+from functools import reduce
+
+def ecv(v):
+    n = [16, 32, 96, 384]
+    return reduce(lambda v, s: (v << s) ^ s, n, v)
+
+
+enc = [the enc goes here]
+
+charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_{}"
+
+
+lookup = {}
+for ch in charset:
+    lookup[ecv(ord(ch)**2)] = ch
+
+
+flag = "".join(lookup.get(v, "?") for v in enc)
+
+print(flag)
+
+\`\`\``,
+                flag: "BYPASS_CTF{pearl_navigated_through_dark_waters_4f92b}"
             }
         ]
     },
@@ -187,6 +280,267 @@ plt.savefig('extracted_layers.png')
 
 <img src="img/steghide.png" width="500">`,
                 flag: "BYPASS_CTF{Aztec_Gold_Curse_Lifted}"
+            },
+            {
+                title: "The Locker of Lost Souls",
+                author: "Vikhyat",
+                description: `They say that to be locked away in Davy Jones' Locker is to be erased from the world of the living, a fate worse than death. One of our divers recovered this image from the wreck of the *Sea Serpent*. The ship's log spoke of a curse, a vision that could only be understood by those who could 'see beyond the veil'. The image seems to be just a picture of an old locker on the seabed, covered in barnacles, but the log claims it holds the key to escape the Locker itself. Standard instruments find nothing. Maybe the old captain was just mad from the pressure, or maybe... you're just not looking at it the right way.`,
+                solution: `Just a stereogram, thats all. 
+
+<img width="1024" height="768" alt="image" src="https://github.com/user-attachments/assets/b6ea5f20-980d-47c2-9303-9a09411172a5" />`,
+                flag: "BYPASS_CTF{D34D_M4N5_CH35T}"
+            },
+            {
+                title: "Jigsaw Puzzle",
+                author: "Vikhyat",
+                description: `Challenge Title: The Captain's Scattered Orders
+
+A rival pirate ransacked Captain Jack Sparrow's cabin and, in a fit of rage, tore his portrait to shreds. But this was no ordinary portrait. The Captain, in his infinite cunning, had scrawled his latest secret orders across the back of it before it was framed.
+
+The 25 pieces were scattered across the deck. If you can piece the Captain's portrait back together, you might just be able to read his hidden message.
+
+Find the pieces in this directory, reassemble the image, and decipher the orders. Good luck, savvy?`,
+                solution: `Arrange the parts to form the image, write down the string that you get with the little letters: \`Gurcnffjbeqvf:oLCNFF_PGS{RVTUG_CBRPRF_BS_R\\TUG}\`.
+
+ROT13 that, we get our flag. \`Thepasswordis:bYPASS_CTF{EIGHT_POECES_OF_E\\GHT}\` (idk why were flags crooked like this, fix the grammar and its correct)`,
+                flag: "BYPASS_CTF{EIGHT_PIECES_OF_EIGHT}"
+            }
+        ]
+    },
+    {
+        category: "Forensics",
+        challenges: [
+            {
+                title: "Captain's Session",
+                author: "Vikhyat",
+                description: `The Captain left no open tabs and no saved files.
+
+What remains is scattered within the browser itself.
+
+Track down the remnants and reveal what was hidden.`,
+                solution: `We're given a script which validates the questions along with a bunch of logs.
+
+First question by the script is \`What is the url of the bookmarked website?\` 
+- On inspecting the logs, bunch of em are sqlite3 DBs. On inspecting the DB called \`Bookmarks\`, we get website \`isdf.dev\`.
+- Enter the answer, we get part 1 -> \`BYPASS_CTF{My_d0g\`
+
+Second question asks for a password
+- Inspecting \`Login Data\` DB, we get the password as \`stepped on\`.
+- Enter the answer, we get part 2 -> \`_0st3pp3d_0n_\`
+
+Got the third part by checking the History DB's url table.
+
+<img width="879" height="69" alt="image" src="https://github.com/user-attachments/assets/d1d10509-2dce-432b-a570-6744a6f03e90" />`,
+                flag: "BYPASS_CTF{My_d0g_0st3pp3d_0n_4_b33_shh}"
+            },
+            {
+                title: "Silas's Last Voyage",
+                author: "Vikhyat",
+                description: `Recovered from the wreck of *The Gilded Eel*, this hard drive belonged to the paranoid navigator Silas Blackwood. Legend says Silas found the route to the "Zero Point" treasure, but he claimed the map itself was alive—shifting and lying to anyone who tried to read it directly.
+
+He left his legacy in this drive. We've tried standard extraction, but all we found were sea shanties and corrupted images. There’s a rumor that Silas split the truth into four winds: Sound, Sight, Logic, and Path.
+
+Beware the "Fools' Gold" (fake flags)—Silas loved to mock the impatient. You must assemble the pieces in the order the *Captain* commands.
+
+File: silas_drive.img`,
+                solution: `Analysis of the disk img gives us a bunch of deleted files. We get 3 files which are different from the others, 2 images and one .wav. The wav had morse code which read \`Logs first path second coin third\` which was to do with the order of the flags. 
+
+The found two images when XOR'ed with each other gives the word \`tales\` which hits towards coin so third part.
+
+<img width="400" height="400" alt="flag" src="https://github.com/user-attachments/assets/494c6c11-d534-47a7-89a7-70ad8a73347b" />
+
+Honestly forgot how I got part two but I got \`tell_no_\` from a base64 string from an error statement or sm and so having \`tell_no_tales\` hinted towards the flag being \`dead_men_tell_no_tales\`. Which happened to be correct.`,
+                flag: "BYPASS_CTF{dead_men_tell_no_tales}"
+            }
+        ]
+    },
+    {
+        category: "Reverse Engineering",
+        challenges: [
+            {
+                title: "Dead Man's Riddle",
+                author: "Vikhyat",
+                description: `"Ye who seek the treasure must pay the price... Navigate the chaos, roll the dice."
+
+A spectral chest sits before you, guarded by a cursed lock that shifts with the tides. The local pirates say the lock has a mind of its own, remembering every mistake you make. There are no keys, only a passphrase spoken into the void.
+
+Can you break the curse and claim the flag?`,
+                solution: `The main logic of this was in the \`consult_compass\` function, where the input string is encrypted using the rolling global variable g_state. For each character, the program combined the character value and its index with part of g_state, producing a transformed byte. This transformed value was then compared against a hard-coded table in check_course(). Since the transformation was fully reversible and the expected values were stored in the binary, we could recreate the algorithm, reverse the math for each of the 30 positions, and recover the original passphrase.
+
+script: 
+
+\`\`\`
+def rol32(x, r):
+    x &= 0xffffffff
+    return ((x << r) | (x >> (32 - r))) & 0xffffffff
+
+g = 0xDEADBEEF
+g ^= 0x1337C0DE
+g = rol32(g, 3) ^ 0x1337C0DE   # result: 0x7fe43150
+
+vals = [
+    18, 83, 60, 68, 32, 119, 168, 232, 82, 49,
+    235, 147, 56, 40, 111, 103, 95, 46, 200, 222,
+    116, 224, 121, 185, 72, 84, 241, 128, 203, 88
+]
+
+out = []
+
+for pos, val in enumerate(vals):
+    shift = pos % 5
+    t = (g >> shift) & 0xffffffff
+
+    c = (val ^ t) - pos
+    c &= 0xff  # keep as byte
+
+    out.append(c)
+
+    # update g_state
+    g = (31337 * g + c) & 0xffffffff
+
+flag = bytes(out).decode()
+print(flag)
+
+\`\`\`
+
+flag: BYPASS_CTF{T1d3s_0f_D3c3pt10n}`,
+                flag: "BYPASS_CTF{T1d3s_0f_D3c3pt10n}"
+            },
+            {
+                title: "Cursed Compass",
+                author: "Vikhyat",
+                description: `"The seas are rough, and the Kraken awaits."
+
+We've recovered a strange game from a derelict pirate ship. The captain claimed the game held the coordinates to his greatest treasure.
+But every time we win, the treasure seems... fake.
+
+Can you navigate the treacherous code and find what lies beneath the surface?
+The game is built for Linux (x86_64). You might need to install SDL2 to run it (\`sudo apt install libsdl2-2.0-0\` or similar).
+
+Hint: Sometimes, the waves themselves whisper the secrets.`,
+                solution: `The \`calculate_wave_physics\` was the function of interest as it had an pseudo rng gen and was XOR'ed with data from \`g_tide_data\`.
+
+Reversing the algorithm, gave us the flag. 
+
+Script:
+\`\`\`
+g = [
+0x4F,0x5D,0x21,0x4E,0x0A,0x5E,0x98,0x0D,0xFE,0xEA,
+0xB2,0xB0,0xC8,0x57,0x9E,0xE8,0xB8,0x49,0x84,0x05,
+0xCE,0x7E,0x49,0xEA,0xEF,0x6F,0x16,0xE3,0x8A,0x29,
+0x70,0x44,0x83,0xA5,0x39,0x67
+]
+
+s = 195948557
+flag = ""
+
+for i in range(len(g)):
+    # advance PRNG i times
+    s = 195948557
+    for _ in range(i):
+        s = (1664525*s + 1013904223) & 0xffffffff
+
+    decoded = ((s >> (i % 7)) ^ g[i]) & 0xff
+    flag += chr(decoded)
+
+print(flag)
+
+\`\`\`
+
+flag: BYPASS_CTF{Fr4m3_By_Fr4m3_D3c3pt10n}`,
+                flag: "BYPASS_CTF{Fr4m3_By_Fr4m3_D3c3pt10n}"
+            },
+            {
+                title: "Captain's Sextant",
+                author: "Vikhyat",
+                description: `"The stars guide the way, but only for those who know the rhythm of the ocean."
+
+You have found an old navigational simulator used by the Pirate Lord to train his navigators.
+Legend says the Lord hid the coordinates to his stash inside the simulation itself.
+But it only reveals itself to those with perfect intuition.
+
+Align the sextant. Follow the stars.
+But remember: The game knows when you are guessing.`,
+                solution: `The function \`process_input_event\` calls another function \`align_star\` which takes \`g_star_timings[]\` as input. The \`align_star\` function has a shift/xor mechanism being made on the values of \`g_star_timings[]\`. Recreate the function and get the flag.
+
+Script: 
+\`\`\`
+timings = [
+    0xE5,0xF3,0x6F,0x7F,0x10,0x33,0xA1,0x24,0xCB,0x30,
+    0xD6,0xFD,0x8A,0x81,0x7D,0xEC,0xF0,0x9D,0xEA,0x07,
+    0x6C,0xBD,0x2C,0xCE,0xFD,0xF7,0xBD,0xF7,0x9A,0xEA,
+    0x4F,0x87,0xCE,0xB4,0x28,0x7E,0x4B,0xA3,0xE9,0x45,
+    0x4F,0x97,0x81,0x68
+]
+
+def lcg_step(k):
+    return (1103515245 * k + 12345) & 0x7FFFFFFF
+
+flag = ""
+for index, t in enumerate(timings):
+    k = 322416807
+    for _ in range(index):
+        k = lcg_step(k)
+
+    shift = (index & 3)
+    mask = (k >> shift) & 0xFF
+    ch = t ^ mask
+    flag += chr(ch)
+
+print(flag)
+
+\`\`\`
+
+flag: BYPASS_CTF{T1m1ng_1s_Ev3ryth1ng_In_Th3_V01d}`,
+                flag: "BYPASS_CTF{T1m1ng_1s_Ev3ryth1ng_In_Th3_V01d}"
+            },
+            {
+                title: "Deceiver's Log",
+                author: "Vikhyat",
+                description: `"Words are wind, and maps are lies. Only the dead speak true, beneath the tides."
+
+You've found the digital logbook of the infamous Captain "Ghost" Jack. It promises untold riches to those who can unlock it.
+But be warned: The Captain was a known liar. He built this log to mock those who try to steal his secrets.
+
+The program seems... friendly enough. It might even give you a flag.
+But is it the *real* flag?
+
+Trust nothing. Verify everything. The truth is fleeting, existing only for a moment before the lies take over.`,
+                solution: `Function \`whisper_truth\` has the flag pretty much with a rotating key XOR. Recreate the function, give the key value which was \`0BADF00D\` (found in \`g_chaos\`)
+
+Script:
+
+\`\`\`
+g_chaos = 0x0BADF00D
+
+constants = {
+ 0:0x4F,1:0x5F,2:0x53,3:0x40,4:0x53,5:0xD3,6:0x9F,7:0xA3,8:0xA4,
+ 9:0xBE,10:7,11:0xEA,12:0xAD,13:0x1A,14:0x82,15:0x2F,16:0xF2,
+ 17:0x98,18:0xDB,19:0x2A,20:0x8A,21:0x33,22:0x1D,23:0x48,
+ 24:0x45,25:0xB5,26:0x36,27:0xFE,28:0x95,29:0x1E,30:7,
+ 31:0x74,32:0x52,33:0x5F,34:0x33,35:0x74,36:0x72,37:0xDF,
+ 38:0x85,39:0x99,40:0xC3,41:0x8B,42:1
+}
+
+def ror(x):
+    return ((x>>1) | ((x&1)<<31)) & 0xFFFFFFFF
+
+k = g_chaos
+out = []
+
+for i in range(43):
+    c = constants[i]
+    out.append((k ^ c) & 0xFF)
+    k = ror(k)
+
+print(bytes(out))
+print(bytes(out).decode(errors="ignore"))
+
+\`\`\`
+
+
+flag: BYPASS_CTF{Tru5t_N0_0n3_N0t_Ev3n_Y0ur_Ey3s}`,
+                flag: "BYPASS_CTF{Tru5t_N0_0n3_N0t_Ev3n_Y0ur_Ey3s}"
             }
         ]
     },
@@ -428,6 +782,18 @@ if __name__ == "__main__":
 \`\`\`
 <img src="img/snakeflag.png" width="450">`,
                 flag: "BYPASS_CTF{5n4k3_1s_v3ry_l0ng}"
+            },
+            {
+                title: "Signal from the deck",
+                author: "Vikhyat",
+                description: `Something aboard the ship is trying to communicate.
+No words. No explanations.
+Only patterns.
+
+Nothing useful lives on the surface.
+The answer waits for those who pay attention.`,
+                solution: `Just a game. Each square is randomly assigned a number per session, just click the square over and over until you find which number is for which square. Do it right a few times, you get the flag.`,
+                flag: "BYPASS_CTF{...}"
             }
         ]
     },

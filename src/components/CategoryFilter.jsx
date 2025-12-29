@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const categories = ["All", "Cryptography", "Steganography", "Web", "Miscellaneous", "Other"];
+const categories = ["All", "Cryptography", "Steganography", "Reverse Engineering", "Forensics", "Web", "Miscellaneous", "Other"];
 
 const CategoryFilter = ({ selectedCategory, setSelectedCategory }) => {
     return (
