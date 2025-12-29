@@ -93,7 +93,7 @@ You recovered this message:
 Flag Format- BYPASS_CTF{ANSWER_IN_UPPERCASE_NO_SPACES}`,
                 solution: `- the hint itself tells this is a \`A1Z26 cipher\`
 - headed to [A1Z26 cipher decoder](https://cryptii.com/pipes/a1z26-cipher)
-![cipher](/img/A1Z26.png)`,
+![cipher](img/A1Z26.png)`,
                 flag: "BYPASS_CTF{REYKJAVIKICELAND}"
             },
             {
@@ -180,12 +180,12 @@ plt.savefig('extracted_layers.png')
 \`\`\`
 
 - this gives us \`extracted_layers.png\` which has a \`qr code\`
-![extracted](/img/extracted_layers.png)
+![extracted](img/extracted_layers.png)
 
 - when scanned the qr code we get the key \`SunlightRevealsAll\`
 - now it is clear, thats not the flag but ran to run \`steghide\`
 
-<img src="/img/steghide.png" width="500">`,
+<img src="img/steghide.png" width="500">`,
                 flag: "BYPASS_CTF{Aztec_Gold_Curse_Lifted}"
             }
         ]
@@ -200,16 +200,16 @@ plt.savefig('extracted_layers.png')
 
 Flag Format:- BYPASS_CTF{.......}`,
                 solution: `- website had a login page, so tried sql injection payload \`' or true--\` in password field and username random.
-![login](/img/sqlreq.png)
-![loginsuccess](/img/loginsuccess.png)
+![login](img/sqlreq.png)
+![loginsuccess](img/loginsuccess.png)
 
 - Request fetch treasure map had an output \`Zvffvat K-Cvengr urnqre.\` decoded rot13 to \`Missing X-Pirate header.\`
-![fetch](/img/fetch.png)
+![fetch](img/fetch.png)
 
 - Added headers as \`X-Pirate: Jack\` then it gives \`VHJhY2UgbG9nYm9vaw==\` when decoded base64 it gives \`Trace logbook\`
 
 - sent request to \`/logbook\` with method \`TRACE\`
-![trace](/img/trace.png)`,
+![trace](img/trace.png)`,
                 flag: "BYPASS_CTF{D0nt_trust_a11}"
             },
             {
@@ -217,10 +217,10 @@ Flag Format:- BYPASS_CTF{.......}`,
                 author: "Swarnim",
                 description: `You've discovered a secret pirate cove, hidden deep within the Tor network — a place where digital buccaneers stash their treasures. Somewhere on these sites lies the captain's flag. Can you find the 📄.`,
                 solution: `- Start your tor and browse the url given.
-![tor](/img/tor.png)
+![tor](img/tor.png)
 
 - Ran ffuf \`ffuf -u http://sjvsa2qdemto3sgcf2s76fbxup5fxqkt6tmgslzgj2qsuxeafbqnicyd.onion/FUZZ -w dirsearch.txt -e .txt,.html,.md,.zip,.bak,.env -x socks5://127.0.0.1:9050\` 
-![ffuf](/img/ffuf.png)
+![ffuf](img/ffuf.png)
 
 - the .env had the flag in plain text.`,
                 flag: "BYPASS_CTF{T0r_r0ut314}"
@@ -230,10 +230,10 @@ Flag Format:- BYPASS_CTF{.......}`,
                 author: "Swarnim",
                 description: `Set sail on an adventure through the treacherous seas of mathematics! Navigate through 20 nautical challenges, each more perilous than the last. Solve riddles of arithmetic under time pressure as the Kraken closes in. Only those who master the pirate code of division, multiplication, and conquest can claim the legendary pirate's map.`,
                 solution: `- This chall was where we get 5 seconds to solve each question which was easy to hardesttt impossible to solve in 5 seconds, so i thought of interceptiog the request and i saw the server side was not validating the progress so sent it to intruder and added numbers payload from 1 to 20 for a garbage value (aim was to send this request 20 times untill the progress is 20)
-![reqqq](/img/reqint.png)
+![reqqq](img/reqint.png)
 
 - Response with less length had the flag.
-![flagmath](/img/flagmath.png)`,
+![flagmath](img/flagmath.png)`,
                 flag: "BYPASS_CTF{d1v1d3_n_c0nqu3r_l1k3_4_p1r4t3}"
             },
             {
@@ -242,10 +242,10 @@ Flag Format:- BYPASS_CTF{.......}`,
                 description: `The page insists it's not here — a digital dead end. Yet, something about this absence feels… intentional.  
 > Pages may lie, but the browser doesn’t.`,
                 solution: `- Inspect network requests, navigated to /favicon.ico which throwed a 404, but still had a response, when tried to save it directly it showed file not available on server, so tried to download it from the \`Network Tab > Preview\`
-![pirate](/img/pirate.png)
+![pirate](img/pirate.png)
 
 - Now ran \`strings favicon.ico\` and got the flag. ;-;
-![pirate](/img/stringspirate.png)`,
+![pirate](img/stringspirate.png)`,
                 flag: "BYPASS_CTF{404_Err0r_N0t_F0und_v}"
             },
             {
@@ -254,10 +254,10 @@ Flag Format:- BYPASS_CTF{.......}`,
                 description: `We stumbled upon a strange fan site hosting a collection of Pirates of the Caribbean movies. It looks like a simple static gallery, but our scanners picked up strange energy signatures coming from the server. Do React.`,
                 solution: `- When I loaded the webpage i saw the headers in request had \`rsc, next-router\` running on \`nextjs 16.0.6\` there I knew it was a CVE.
 - As a bugbounty hunter I knew about \`CVE-2025-55182\` and I used to use an extension from [mrknow001](https://github.com/mrknow001/RSC_Detector) to hunt for vulns. there it was confirmed that it was a \`React2Shell\`
-![r2c](/img/r2s.png)
+![r2c](img/r2s.png)
 
 - now when I ran \`ls\` I found there was a \`flag.txt\` but when you read it it gave whitespaces so had to read it as base64 so used \`base64 flag.txt\` 
-![bflag](/img/bflag.png)
+![bflag](img/bflag.png)
 
 - now ran this command on my terminal and got the flag.txt on my terminal \`echo "BASE64_HERE" | base64 -d > flag.txt\`
 
@@ -278,7 +278,7 @@ checking vc might help
 \`\`\`
 - check branch looked suspicious so I tried to look into check branch \`git show check\`
 
-![p3](/img/p3.png)
+![p3](img/p3.png)
 
 - BOOM!!! P3: \`Acc3ss}\`
 - Now we have P1 and P3, so P2?
@@ -348,7 +348,7 @@ Good luck. You’ll need it.`,
     }
 })();
 \`\`\`
-![game](/img/game.png)`,
+![game](img/game.png)`,
                 flag: "BYPASS_CTF{l3v3l_d3v1l_n0t_s0_1nn0c3nt}"
             },
             {
@@ -358,7 +358,7 @@ Good luck. You’ll need it.`,
                 solution: `- so the image when opened showed a devboard with pin numbers
 - \`68 65 61 72 74 5f 69 6e 5f 61 5f 63 68 65 73 74\`
 - opened cyber chef and decoded it to ascii \`heart_in_a_chest\`
-![cc](/img/cc.png)`,
+![cc](img/cc.png)`,
                 flag: "BYPASS_CTF{heart_in_a_chest}"
             },
             {
@@ -372,7 +372,7 @@ Good luck. You’ll need it.`,
 - questioned myself, what do i do when i open instagram?
 - sad realization that \`no interaction = no flag\`
 - i had to login from my alt acc and then i started liking commenting \`(flag, bypass_ctf)\` on all reels, then I got a dm saying \`here your flag pirate\`
-<img src="/img/insta.jpeg" width="350">`,
+<img src="img/insta.jpeg" width="350">`,
                 flag: "BYPASS_CTF{i_l0v3_i$d4}"
             },
             {
@@ -385,7 +385,7 @@ Good luck. You’ll need it.`,
 - \`POST /api/start\` - Initiates the game, returns grid size and initial food.
 - \`POST /api/eat\` - Validates a move. Returns \`status: "correct"\` (with a flag) or \`status: "wrong"\` (reset).
 - while interceptiong the request found it was giving a json output
-![snakereq](/img/snakereq.png)
+![snakereq](img/snakereq.png)
 
 - now with the apis had to write a py script to get the correct food and get the flag
 \`\`\`
@@ -426,7 +426,7 @@ def pwn():
 if __name__ == "__main__":
     pwn()
 \`\`\`
-<img src="/img/snakeflag.png" width="450">`,
+<img src="img/snakeflag.png" width="450">`,
                 flag: "BYPASS_CTF{5n4k3_1s_v3ry_l0ng}"
             }
         ]
@@ -448,13 +448,13 @@ Flag unlocks post-verification.
 
 >Just look around the ship; sometimes the pirates carry the flag.`,
                 solution: `- Part1: in #welcome channel description had a spoiler text \`BYPASS_CTF{w3lc0m3\`
-![spoiler](/img/spoiler.png)
+![spoiler](img/spoiler.png)
 
 - Part2: this one tricked me out so bad. when I saw the emojies in the server one said \`:_t00_:\`
-![emoji](/img/emoji.png)
+![emoji](img/emoji.png)
 
 - Part3: description said \`pirates carry the flag\`, I started asking mods for the flags lol, but when I opened \`jrdevadattan\`s profile banner had the flag \`byp4ss_ctf}\`
-![deva](/img/deva.png)`,
+![deva](ximg/deva.png)`,
                 flag: "BYPASS_CTF{w3lc0m3_t00_byp4ss_ctf}"
             }
         ]
