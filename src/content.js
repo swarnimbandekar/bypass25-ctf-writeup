@@ -820,7 +820,7 @@ Flag unlocks post-verification.
 ![emoji](img/emoji.png)
 
 - Part3: description said \`pirates carry the flag\`, I started asking mods for the flags lol, but when I opened \`jrdevadattan\`s profile banner had the flag \`byp4ss_ctf}\`
-![deva](ximg/deva.png)`,
+![deva](img/deva.png)`,
                 flag: "BYPASS_CTF{w3lc0m3_t00_byp4ss_ctf}"
             }
         ]
